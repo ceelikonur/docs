@@ -1,0 +1,113 @@
+---
+title: "What is Brain API?"
+description: "The AI agent infrastructure platform — MCP-native, enterprise-grade, and built for the A2A era."
+---
+
+## Build AI agents that actually work in production
+
+Brain API is an **AI agent platform** that gives you everything you need to build, deploy, and operate intelligent automations — without stitching together a dozen tools.
+
+<CardGroup cols={2}>
+  <Card title="5-Minute Quickstart" icon="rocket" href="/quickstart">
+    Deploy your first AI agent and run a workflow in under 5 minutes.
+  </Card>
+  <Card title="Key Concepts" icon="book" href="/key-concepts">
+    Understand Agents, Workflows, Recipes, and MCP Integrations.
+  </Card>
+  <Card title="MCP Integrations" icon="plug" href="/integrations/overview">
+    Connect to Slack, GitHub, Notion, SAP, HubSpot, and 20+ more.
+  </Card>
+  <Card title="A2A Protocol" icon="share-2" href="/fundamentals/a2a-protocol">
+    Make your agents interoperable with the Google Agent2Agent standard.
+  </Card>
+</CardGroup>
+
+---
+
+## Why Brain API?
+
+### The problem with existing tools
+
+Most AI agent platforms force you to choose between **power** and **safety**:
+- No-code tools (Lindy, Relevance AI) are easy but lack enterprise controls
+- Developer tools (LangChain, CrewAI) are powerful but require months to productionize
+- Gateway tools (Portkey) lock security features behind $5,000+/month Enterprise plans
+
+### Brain API is different
+
+<AccordionGroup>
+  <Accordion title="MCP-Native Architecture">
+    Built on the **Model Context Protocol** from the ground up. Every integration is a typed, testable MCP server — not a brittle webhook. When something breaks, you know exactly why.
+  </Accordion>
+  <Accordion title="Zero-Trust DLP Engine">
+    Bidirectional PII masking on every AI call. Redact credit cards, SSNs, emails, and custom patterns before they reach the LLM — and unmask them in the response. Available on all plans, not just Enterprise.
+  </Accordion>
+  <Accordion title="A2A Protocol — First Mover">
+    Brain API is one of the first platforms to implement Google's **Agent2Agent Protocol**. Your agents can discover, connect, and delegate tasks to any A2A-compatible agent — including SAP, LangChain, and Salesforce agents.
+  </Accordion>
+  <Accordion title="SAP S/4HANA Integration">
+    The only AI agent platform with native SAP integration. Read ABAP programs, process IDocs, run aUnit tests, and automate EWM workflows — all from natural language.
+  </Accordion>
+  <Accordion title="Transparent Billing">
+    Token balance that depletes **after** each successful AI call — never before. No surprise charges. No opaque credit systems. See exactly what each agent run costs.
+  </Accordion>
+</AccordionGroup>
+
+---
+
+## Platform Overview
+
+```
+┌─────────────────────────────────────────────────────────┐
+│                      Brain API                          │
+│                                                         │
+│  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌────────┐  │
+│  │  Agent   │  │Workflows │  │ Recipes  │  │ Swarms │  │
+│  │  Chat    │  │ Builder  │  │  Cron &  │  │ Multi- │  │
+│  │          │  │ (7 nodes)│  │ Webhook  │  │ Agent  │  │
+│  └────┬─────┘  └────┬─────┘  └────┬─────┘  └───┬────┘  │
+│       └─────────────┴─────────────┴─────────────┘       │
+│                         │                               │
+│              ┌──────────▼──────────┐                    │
+│              │    AI Gateway       │                    │
+│              │  Fallback · Cache · │                    │
+│              │  Rate Limit · DLP   │                    │
+│              └──────────┬──────────┘                    │
+│                         │                               │
+│       ┌─────────────────┼─────────────────┐             │
+│       ▼                 ▼                 ▼             │
+│  ┌─────────┐      ┌──────────┐      ┌──────────┐        │
+│  │   MCP   │      │Knowledge │      │   A2A    │        │
+│  │Servers  │      │   Base   │      │Protocol  │        │
+│  │(24+ int)│      │  (RAG)   │      │ External │        │
+│  └─────────┘      └──────────┘      │  Agents  │        │
+│                                     └──────────┘        │
+└─────────────────────────────────────────────────────────┘
+```
+
+---
+
+## Core Building Blocks
+
+| Concept | What it does |
+|---------|-------------|
+| **Agent** | AI assistant with a system prompt, model selection, and access to MCP tools |
+| **Workflow** | Visual drag-and-drop automation with 7 node types (Trigger, LLM, Tool, Condition, Loop, Approval, Delay) |
+| **Recipe** | Pre-built automation template that runs on a schedule or webhook trigger |
+| **MCP Integration** | Typed connection to an external service (Slack, GitHub, SAP, etc.) |
+| **Knowledge Base** | RAG-powered document store — upload docs, query semantically |
+| **Swarm** | Parallel multi-agent execution for complex, decomposable tasks |
+| **A2A Protocol** | Standard for agent-to-agent communication and task delegation |
+
+---
+
+## Supported AI Models
+
+Brain API works with all major providers via **BYOK** (Bring Your Own Key):
+
+- **Anthropic** — Claude Opus 4.6, Claude Sonnet 4.6, Claude Haiku 4.5
+- **OpenAI** — GPT-4o, GPT-4o Mini, o1, o3
+- **Google** — Gemini Pro, Gemini Flash
+- **Local LLMs** — LM Studio, Ollama (Qwen, DeepSeek, Llama)
+
+AI Gateway handles automatic fallback between providers when one fails.

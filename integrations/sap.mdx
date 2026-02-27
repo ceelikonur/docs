@@ -1,0 +1,108 @@
+---
+title: "SAP S/4HANA"
+description: "The only AI agent platform with native SAP integration — ABAP, IDocs, EWM, and more."
+---
+
+## Overview
+
+Brain API is the **only AI agent platform** with native SAP S/4HANA integration. Connect your AI agents directly to your SAP landscape to automate EWM operations, analyze ABAP programs, process IDocs, and run aUnit tests — all from natural language.
+
+<Note>
+  SAP integration is included on **all plans**. No additional SAP middleware or licenses required beyond your existing SAP setup.
+</Note>
+
+---
+
+## Available Tools
+
+| Tool | Description |
+|------|-------------|
+| `read_abap_program` | Read source code of any ABAP class, function module, or report |
+| `update_abap_program` | Modify ABAP code with syntax check (simulate=true by default) |
+| `read_sap_table` | Read rows from any SAP table (MARA, VBAK, /SCWM/T331, etc.) |
+| `get_latest_abap_dumps` | Fetch recent ST22 short dumps |
+| `read_failed_idocs` | Inspect failed IDocs from WE02/WE05 |
+| `execute_aunit_test` | Run ABAP Unit tests for a class or program |
+| `generate_abap_spec` | Generate technical specification from ABAP object |
+| `generate_customizing_transport` | Create customizing table entries from requirements |
+| `create_odata_service` | Expose ABAP logic as OData V4 service for Fiori |
+
+---
+
+## Example Use Cases
+
+### ABAP Code Review
+
+```
+"Review the class ZCL_EWM_INBOUND_TOLERANCE and identify potential
+performance issues in the method IF_EX_DELIVERY~CHANGE_BEFORE_UPDATE"
+```
+
+The agent reads the ABAP source, analyzes it, and provides specific recommendations.
+
+### IDoc Troubleshooting
+
+```
+"Show me all failed WHSCON IDocs from the last 24 hours and explain
+why they failed"
+```
+
+### EWM Customizing
+
+```
+"Create a new Cold Storage warehouse type for our Hamburg facility
+with the standard inbound and outbound process types"
+```
+
+### Automated aUnit Testing
+
+```
+"Run all aUnit tests for ZCL_MATERIAL_VALIDATOR and summarize the results"
+```
+
+---
+
+## Connection Setup
+
+SAP integration requires connection to your SAP system. Contact your SAP Basis team for:
+
+1. **RFC destination** — Brain API communicates via RFC/HTTP
+2. **Service user** — Create a dedicated service user with minimum required authorizations
+3. **Network access** — Brain API needs to reach your SAP application server
+
+<Warning>
+  Always use `simulate: true` first when modifying ABAP code. This performs a syntax check without saving. Only use `simulate: false` after explicit review and approval.
+</Warning>
+
+### Required SAP Authorizations
+
+```abap
+S_RFC:       RFC_TYPE=FUNC, RFC_NAME=RFC_READ_REPORT
+S_DEVELOP:   DEVCLASS=*, OBJTYPE=PROG, OBJNAME=*, P_GROUP=*, ACTVT=03
+S_TABU_DIS:  DICBERCLS=&NC&, ACTVT=03
+```
+
+---
+
+## Safety Controls
+
+The SAP MCP server enforces the **simulate-first** pattern:
+
+- Code modifications **always** require `simulate: true` first
+- Syntax check is performed before any save
+- Transport request is automatically created for changes
+- All operations are logged in Brain API's Audit Logs
+
+This means AI can **never** accidentally break your SAP system without going through the standard transport process.
+
+---
+
+## Supported SAP Modules
+
+| Module | Supported Operations |
+|--------|---------------------|
+| **EWM** | Warehouse types, process types, storage sections, inbound/outbound |
+| **MM** | Material master, purchasing documents, inventory |
+| **SD** | Sales orders, deliveries, billing |
+| **FI** | Cost centers, profit centers, postings |
+| **ABAP** | All object types, aUnit, IDocs |

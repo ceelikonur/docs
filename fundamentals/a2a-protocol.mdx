@@ -1,0 +1,162 @@
+---
+title: "A2A Protocol"
+description: "Connect Brain API agents to any A2A-compatible agent in the world — including SAP, LangChain, and Salesforce."
+---
+
+## What is A2A?
+
+**Agent2Agent (A2A)** is an open protocol launched by Google in April 2025 and donated to the Linux Foundation. It defines a standard way for AI agents — built by different companies, on different frameworks — to discover each other and exchange tasks.
+
+Think of MCP as **agent-to-tool** communication (your agent calls a Slack tool).
+Think of A2A as **agent-to-agent** communication (your agent delegates a task to a SAP agent).
+
+> Brain API is one of the first platforms to implement A2A natively. With 50+ launch partners including SAP, LangChain, and Salesforce, this protocol is becoming the standard.
+
+---
+
+## Core Concepts
+
+### Agent Card
+
+Every A2A-compatible agent publishes an **Agent Card** at `/.well-known/agent.json`. This is a JSON document that describes:
+- What the agent can do (skills)
+- How to communicate with it (endpoint URL)
+- What authentication it requires
+- What capabilities it supports (streaming, push notifications)
+
+Brain API's Agent Card is at:
+```
+GET https://brainapi.dev/.well-known/agent.json
+```
+
+### Tasks
+
+A2A communication is **task-oriented**. When you want another agent to do something, you create a Task:
+
+```json
+{
+  "message": {
+    "role": "user",
+    "parts": [{ "type": "text", "text": "Analyze this SAP IDoc for errors" }]
+  }
+}
+```
+
+### Task Lifecycle
+
+```
+submitted → working → completed
+                    → input-required → working → completed
+                    → failed
+                    → canceled
+```
+
+---
+
+## Brain API as A2A Server
+
+External A2A agents can send tasks to Brain API:
+
+```bash
+POST https://brainapi.dev/api/a2a/tasks
+Authorization: Bearer YOUR_TOKEN
+Content-Type: application/json
+
+{
+  "message": {
+    "role": "user",
+    "parts": [{ "type": "text", "text": "Search our knowledge base for GDPR requirements" }]
+  }
+}
+```
+
+**Response:**
+```json
+{
+  "jsonrpc": "2.0",
+  "id": "task-uuid-here",
+  "result": {
+    "id": "task-uuid-here",
+    "status": { "state": "submitted", "timestamp": "2026-02-27T..." }
+  }
+}
+```
+
+Then poll for results:
+```bash
+GET /api/a2a/tasks/{taskId}
+```
+
+---
+
+## Brain API as A2A Client
+
+### 1. Discover an External Agent
+
+```bash
+POST /api/a2a/agents/discover
+{
+  "url": "https://sap-agent.example.com"
+}
+```
+
+Brain API fetches their `/.well-known/agent.json`, validates it, and saves it to your connected agents list.
+
+### 2. Delegate a Task
+
+Go to **Dashboard → A2A Protocol → Connected Agents**, click **Delegate Task** on any connected agent, and describe what you want.
+
+Or via API:
+```bash
+POST /api/a2a/agents/{agentId}/delegate
+{
+  "message": {
+    "role": "user",
+    "parts": [{ "type": "text", "text": "Create a purchase order for 100 units of SKU-4421" }]
+  }
+}
+```
+
+### 3. Track the Task
+
+All delegated tasks appear in **Dashboard → A2A Protocol → Task History** with full status tracking.
+
+---
+
+## Dashboard
+
+Navigate to **Dashboard → A2A Protocol** to access three tabs:
+
+<Tabs>
+  <Tab title="My Agent Card">
+    View and copy Brain API's published Agent Card. Shows your endpoint URL, capabilities, and all available skills.
+  </Tab>
+  <Tab title="Connected Agents">
+    Grid of all external A2A agents you've discovered. Add new agents, sync their capabilities, or delegate tasks.
+  </Tab>
+  <Tab title="Task History">
+    Full log of all A2A tasks — both inbound (tasks sent to Brain API) and outbound (tasks you delegated). Filter by status and direction.
+  </Tab>
+</Tabs>
+
+---
+
+## Brain API's Skills (as seen by other agents)
+
+| Skill ID | Name | Description |
+|----------|------|-------------|
+| `chat` | AI Chat | Conversational AI with MCP tool access |
+| `knowledge-search` | Knowledge Base | Semantic search over your documents |
+| `workflow-run` | Workflow Execution | Run multi-step automated workflows |
+| `mcp-tools` | MCP Tool Access | 50+ integrations via MCP |
+| `sap-integration` | SAP S/4HANA | ABAP, IDoc, EWM operations |
+
+---
+
+## Authentication
+
+Brain API's A2A endpoints support **Bearer token** authentication for external agents. Generate an API key in **Dashboard → API Keys** and include it in the `Authorization` header.
+
+```
+Authorization: Bearer brain_sk_...
+```

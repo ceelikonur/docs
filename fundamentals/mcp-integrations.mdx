@@ -1,0 +1,145 @@
+---
+title: "MCP Integrations"
+description: "What the Model Context Protocol is and how Brain API uses it to connect your agents to the world."
+---
+
+## What is MCP?
+
+The **Model Context Protocol (MCP)** is an open standard that lets AI agents communicate with external tools and services in a structured, typed way. Think of it as USB-C for AI — one standard connector, any device.
+
+Brain API uses MCP as its **native integration layer**. Every integration (Slack, GitHub, SAP, etc.) is a dedicated MCP server that exposes typed tools your agent can call.
+
+### MCP vs. Traditional Integrations
+
+| | Traditional Webhooks / APIs | MCP (Brain API) |
+|--|--|--|
+| **Discovery** | Manual — you know the endpoints | Automatic — agent discovers tools |
+| **Type safety** | None | Full JSON Schema per tool |
+| **Error handling** | Custom per integration | Standardized error format |
+| **Auth** | Per-integration custom | Injected from encrypted vault |
+| **Testing** | Manual curl / Postman | Built-in test panel |
+
+---
+
+## How It Works
+
+When you connect an integration, Brain API starts its MCP server and registers it with the AI orchestrator:
+
+```
+User message → Chat Route → AI (with tool list) → MCP Tool Call → External Service → Response
+```
+
+The AI **automatically decides** which tool to call based on the user's request — you don't need to specify it.
+
+### Example
+
+```
+User: "Create a GitHub issue titled 'Fix login bug' in the frontend repo"
+
+Agent thinks: I need the create_issue tool from the GitHub MCP server.
+
+Tool call: github.create_issue({
+  title: "Fix login bug",
+  repo: "frontend",
+  body: "..."
+})
+
+Response: "Issue #142 created: https://github.com/org/frontend/issues/142"
+```
+
+---
+
+## Available Integrations
+
+<CardGroup cols={3}>
+  <Card title="Slack" icon="slack" href="/integrations/slack">
+    Send messages, list channels, get message history
+  </Card>
+  <Card title="GitHub" icon="github" href="/integrations/github">
+    Create issues, review PRs, manage repos
+  </Card>
+  <Card title="Notion" icon="book" href="/integrations/notion">
+    Search pages, create docs, query databases
+  </Card>
+  <Card title="HubSpot" icon="hubspot" href="/integrations/hubspot">
+    Manage contacts, deals, and companies
+  </Card>
+  <Card title="Salesforce" icon="cloud" href="/integrations/salesforce">
+    SOQL queries, create/update records
+  </Card>
+  <Card title="SAP S/4HANA" icon="building" href="/integrations/sap">
+    ABAP programs, IDocs, EWM operations
+  </Card>
+  <Card title="Google Workspace" icon="google" href="/integrations/google-workspace">
+    Gmail, Google Calendar, Google Drive
+  </Card>
+  <Card title="Airtable" icon="table" href="/integrations/airtable">
+    List, create, update, and search records
+  </Card>
+  <Card title="Stripe" icon="credit-card" href="/integrations/stripe">
+    Customers, invoices, payment links
+  </Card>
+</CardGroup>
+
+And more: Zendesk, Confluence, Asana, Trello, Discord, LinkedIn, SAP...
+
+---
+
+## Connecting an Integration
+
+### OAuth-based (GitHub, Google, Slack)
+
+1. Go to **Dashboard → Integrations**
+2. Click **Connect with OAuth** on the provider
+3. Authorize in the popup window
+4. Token is automatically encrypted and stored
+
+### API Key-based (HubSpot, Airtable, Stripe)
+
+1. Go to **Dashboard → Integrations**
+2. Click **Connect** on the provider
+3. Paste your API key or access token
+4. Click **Save** — key is AES-256-GCM encrypted
+
+### SAP (Special)
+
+SAP requires additional configuration. See the [SAP Integration Guide](/integrations/sap).
+
+---
+
+## Token Security
+
+All integration tokens are stored encrypted using **AES-256-GCM** with a unique IV per token. The master encryption key (`ENCRYPTION_MASTER_KEY`) never touches the database.
+
+```
+User API key → AES-256-GCM encrypt → Supabase (encrypted blob)
+                                           ↓
+Agent call → Decrypt in memory → MCP server → API call
+                                           ↓
+                           Token never logged or exposed
+```
+
+---
+
+## Building a Custom MCP Server
+
+Brain API supports custom MCP servers. Use the scaffold CLI:
+
+```bash
+node scripts/scaffold-mcp.mjs my-integration
+```
+
+This generates a typed TypeScript MCP server template. See [MCP Development Guide](/MCP_DEVELOPMENT.md) for the full spec.
+
+### Host it on Brain API
+
+Once built, you can host your MCP server on Brain API's cloud:
+
+```
+POST /api/mcp/host/[your-slug]
+```
+
+Your server becomes available as an SSE endpoint at:
+```
+GET /api/mcp/host/[your-slug]/sse
+```

@@ -1,0 +1,67 @@
+---
+title: "Roadmap"
+description: "What we're building next — vote on features and track progress."
+---
+
+## Now (Current Sprint)
+
+<Check>A2A Protocol — Google Agent2Agent standard</Check>
+<Check>Documentation site (you're reading it)</Check>
+
+---
+
+## Next Up
+
+These are confirmed and actively being built:
+
+### Agent Memory (GAP-36)
+Persistent cross-session memory for agents. After each conversation, key facts are extracted and stored as vector embeddings. Future conversations automatically retrieve relevant memories and inject them into context.
+
+**What this unlocks:** Agents that remember your preferences, previous decisions, and important context — just like a real assistant.
+
+---
+
+### Agent Test & Debug Panel (GAP-34)
+Before deploying an agent, test it in isolation. Step-by-step execution visualization, tool call trace, error inspector, and "re-run last input" — all in the Dashboard.
+
+---
+
+### Agent Monitoring Dashboard (GAP-35)
+Per-agent health metrics: last run time, success rate, average latency, error count. Alert on consecutive failures via in-app notification.
+
+---
+
+## Planned
+
+### Evaluation & Testing Framework (GAP-37)
+Create test datasets, run your agent against them, compare results across model versions. LangSmith-style evals built into the platform.
+
+### Cost Projection (Linear Regression)
+Based on your `usage_events` history, project next month's token spend. Shown as a line in the analytics chart.
+
+### Approval Notifications (Slack/Email)
+When a human approval is required, get notified via Slack or email — not just in the dashboard.
+
+### Webhook Debug & Retry UI (GAP-27)
+Every inbound webhook delivery is logged with full request/response. One-click replay for failed deliveries.
+
+### Batch/Async Processing (GAP-24)
+Submit an array of inputs as a single batch job. Results downloadable as JSON or CSV.
+
+---
+
+## Under Consideration
+
+These are on our radar but not yet committed:
+
+- **Multi-modal support** — Image and audio inputs for agents
+- **Python/TypeScript SDK** — `@brain-api/sdk` npm package
+- **i18n** — Turkish, German, French, Spanish UI
+- **Fine-tuned model support** — Register your own fine-tuned model IDs
+- **React Native mobile app** — Long-term
+
+---
+
+## Suggest a Feature
+
+Open an issue on [GitHub](https://github.com/ceelikonur/brain-api-demo/issues) with the label `feature-request`.

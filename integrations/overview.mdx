@@ -1,0 +1,87 @@
+---
+title: "Integrations Overview"
+description: "Connect your agents to 24+ services via MCP — typed, secure, and automatically discovered."
+---
+
+## How Integrations Work
+
+Every Brain API integration is a **MCP Server** — a typed, testable connection to an external service. Your agent automatically discovers available tools and calls them when needed.
+
+See [MCP Integrations](/fundamentals/mcp-integrations) for the full architecture overview.
+
+---
+
+## Available Integrations
+
+### Productivity & Communication
+
+| Integration | Key Tools | Auth |
+|-------------|-----------|------|
+| [Slack](/integrations/slack) | send_message, list_channels, get_messages, set_status | Bot Token |
+| Discord | send_message, get_messages, list_channels | Bot Token |
+| [Google Workspace](/integrations/google-workspace) | Gmail send/search, Calendar list/create | OAuth |
+| Microsoft Teams | (coming soon) | OAuth |
+
+### Project Management & Docs
+
+| Integration | Key Tools | Auth |
+|-------------|-----------|------|
+| [GitHub](/integrations/github) | create_issue, list_prs, create_repo, push_file | PAT / OAuth |
+| [Notion](/integrations/notion) | search, get_page, create_page, query_database | OAuth |
+| Confluence | search, get_page, create_page | API Key |
+| Asana | list_tasks, create_task, update_task | API Key |
+| Trello | list_boards, create_card, move_card | API Key |
+
+### CRM & Sales
+
+| Integration | Key Tools | Auth |
+|-------------|-----------|------|
+| [HubSpot](/integrations/hubspot) | search_contacts, create_contact, get_deal | API Key |
+| [Salesforce](/integrations/salesforce) | soql_query, create_record, get_record | OAuth |
+| Airtable | list_records, create_record, search_records | API Key |
+
+### Finance & Payments
+
+| Integration | Key Tools | Auth |
+|-------------|-----------|------|
+| [Stripe](/integrations/stripe) | list_customers, create_invoice, create_payment_link | API Key |
+
+### Customer Support
+
+| Integration | Key Tools | Auth |
+|-------------|-----------|------|
+| Zendesk | search_tickets, create_ticket, update_ticket | API Key |
+
+### Enterprise
+
+| Integration | Key Tools | Auth |
+|-------------|-----------|------|
+| [SAP S/4HANA](/integrations/sap) | read_abap, update_abap, read_table, process_idocs | RFC/HTTP |
+| LinkedIn | fetch_profile, create_post | OAuth |
+
+---
+
+## Coming Soon
+
+Based on user requests, these integrations are on our roadmap:
+
+- Jira
+- Monday.com
+- Intercom
+- Pipedrive
+- Shopify
+- Microsoft Outlook
+
+Want an integration that's not listed? [Request it on GitHub](https://github.com/ceelikonur/brain-api-demo/issues).
+
+---
+
+## Build Your Own
+
+Use the MCP scaffold to create a custom integration:
+
+```bash
+node scripts/scaffold-mcp.mjs my-service
+```
+
+Then host it on Brain API's cloud or run it locally. See [MCP Development Guide](/fundamentals/mcp-integrations#building-a-custom-mcp-server).

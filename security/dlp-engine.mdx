@@ -1,0 +1,130 @@
+---
+title: "DLP Engine"
+description: "Zero-Trust Data Loss Prevention — bidirectional PII masking on every AI call."
+---
+
+## Overview
+
+Brain API's **DLP (Data Loss Prevention) Engine** automatically redacts sensitive information before it reaches the LLM, then re-injects the real values in the response. This means your users' credit card numbers, social security numbers, and other PII never leave your infrastructure in plaintext.
+
+<Note>
+  DLP is available on **all plans** — Free, Pro, and Enterprise. We believe security should not be a $5,000/month upsell.
+</Note>
+
+---
+
+## How It Works
+
+```
+User input → DLP Engine (redact) → LLM API → DLP Engine (unmask) → Response
+              ↓                                      ↑
+         "Card: [CREDIT_CARD_1]"         "Card: [CREDIT_CARD_1]"
+              ↓                                      ↑
+         Mask registry: {                     Unmask registry
+           CREDIT_CARD_1: "4111-1111-1111-1111"
+         }
+```
+
+The engine:
+1. Scans input for sensitive patterns
+2. Replaces matches with tokens (e.g., `[EMAIL_1]`, `[SSN_1]`)
+3. Stores the real values in a temporary mask registry
+4. Sends the tokenized input to the LLM
+5. Scans the response for tokens
+6. Re-injects the real values before returning to the user
+
+---
+
+## Built-in Detection Patterns
+
+| Pattern | Example | Token |
+|---------|---------|-------|
+| Credit Card | `4111 1111 1111 1111` | `[CREDIT_CARD_1]` |
+| SSN (US) | `123-45-6789` | `[SSN_1]` |
+| Email Address | `user@example.com` | `[EMAIL_1]` |
+| Phone Number | `+1 (555) 123-4567` | `[PHONE_1]` |
+| API Key (generic) | `sk_live_abc123...` | `[API_KEY_1]` |
+| Bearer Token | `Bearer eyJ...` | `[BEARER_TOKEN_1]` |
+| IPv4 Address | `192.168.1.1` | `[IP_ADDRESS_1]` |
+
+---
+
+## Custom Masking Rules
+
+Add your own patterns in **Dashboard → Security → Masking Rules**:
+
+```json
+{
+  "name": "Employee ID",
+  "pattern": "EMP-[0-9]{6}",
+  "replacement": "[EMPLOYEE_ID]",
+  "enabled": true
+}
+```
+
+Rules support full **regex** syntax. Common use cases:
+- Internal IDs (order numbers, customer IDs)
+- Medical record numbers
+- Custom authentication tokens
+- Contract numbers
+
+---
+
+## Explicit Redaction Tool
+
+Your agent can also redact content on-demand using the `redact_sensitive_content` tool:
+
+```
+User: "Redact this before storing: John Smith, SSN 123-45-6789, card 4111-1111-1111-1111"
+
+Agent: Calls redact_sensitive_content({
+  text: "John Smith, SSN 123-45-6789, card 4111-1111-1111-1111"
+})
+
+Response: "John Smith, SSN [SSN_1], card [CREDIT_CARD_1]"
+```
+
+Or use the standalone API:
+
+```bash
+POST /api/security/redact
+{
+  "text": "Contact john@example.com at +1 555-123-4567"
+}
+```
+
+Response:
+```json
+{
+  "redacted": "Contact [EMAIL_1] at [PHONE_1]",
+  "masks": {
+    "EMAIL_1": "john@example.com",
+    "PHONE_1": "+1 555-123-4567"
+  }
+}
+```
+
+---
+
+## Audit Trail
+
+Every DLP redaction is logged in the **Audit Logs** (`Dashboard → Logs`) with:
+- Timestamp
+- Which patterns were triggered
+- Number of tokens replaced
+- Request/response hash (not the content)
+
+This creates a compliance-ready audit trail without storing the sensitive data itself.
+
+---
+
+## Compliance
+
+The DLP Engine helps with:
+
+| Regulation | How DLP helps |
+|-----------|---------------|
+| **GDPR** | Prevent personal data from reaching third-party LLM APIs |
+| **HIPAA** | Mask PHI before AI processing |
+| **PCI-DSS** | Block card numbers from LLM logs |
+| **SOC 2** | Documented data minimization controls |

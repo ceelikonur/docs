@@ -1,0 +1,96 @@
+---
+title: "SAP Operations Automation"
+description: "Automate SAP S/4HANA operations with natural language — the use case no competitor offers."
+---
+
+## Overview
+
+SAP operations teams spend hours on repetitive tasks: reviewing ABAP dumps, processing IDocs, creating customizing transports, and running aUnit tests. Brain API turns these into natural language conversations.
+
+---
+
+## Example Workflows
+
+### Daily IDoc Health Check
+
+**Trigger:** Cron — every day at 8am
+**Prompt:** "Check for failed IDocs from the last 24 hours. For each failure, identify the root cause and suggest a fix. Create a summary report."
+
+**What happens:**
+1. Agent calls `read_failed_idocs` (filters by last 24h)
+2. For each failed IDoc, calls `read_sap_table` to get related data
+3. Analyzes error messages with LLM
+4. Sends summary to Slack via Slack MCP
+
+---
+
+### ABAP Code Review on PR
+
+**Trigger:** GitHub webhook (push to main)
+**Prompt:** "A new ABAP class was pushed: {{github.changed_files}}. Read each changed program, review for performance issues, and comment on the GitHub PR."
+
+**What happens:**
+1. GitHub webhook fires with changed file list
+2. Agent calls `read_abap_program` for each ABAP object
+3. LLM reviews for performance, security, and best practices
+4. Agent posts review comments via GitHub MCP
+
+---
+
+### EWM Customizing Assistant
+
+**Via Agent Chat:**
+```
+"We're opening a new Cold Chain warehouse in Frankfurt next month.
+Create the warehouse type, storage sections, and process types
+for inbound and outbound. Use the same setup as our Hamburg facility."
+```
+
+**What happens:**
+1. Agent reads Hamburg facility config via `read_sap_table`
+2. Calls `generate_customizing_transport` with the new facility requirements
+3. Creates transport with `simulate: true` first (syntax check)
+4. On confirmation, saves with `simulate: false`
+
+---
+
+### Automated aUnit Test Run
+
+**Trigger:** Before any ABAP deployment (integrated with CI/CD webhook)
+
+```bash
+POST /api/automations/trigger
+Authorization: Bearer YOUR_KEY
+{
+  "input": "Run aUnit tests for ZCL_MATERIAL_VALIDATOR and fail if any test fails"
+}
+```
+
+**Response (passed):**
+```json
+{
+  "status": "passed",
+  "tests": 24,
+  "failures": 0,
+  "duration": "2.3s"
+}
+```
+
+---
+
+## Setting Up SAP + Brain API
+
+1. **Configure SAP connection** — RFC destination pointing to Brain API's IP
+2. **Create service user** — minimum required authorizations (see [SAP Integration](/integrations/sap))
+3. **Connect in Dashboard** — Dashboard → Integrations → SAP S/4HANA
+4. **Test** — Ask the agent: "Read the class ZCL_TEST and summarize what it does"
+
+---
+
+## Security Considerations
+
+- All SAP credentials stored encrypted (AES-256-GCM)
+- ABAP modifications go through standard SAP transport process
+- `simulate: true` mandatory before any code change
+- Every SAP operation logged in Brain API's Audit Logs
+- DLP Engine protects sensitive SAP data from LLM exposure

@@ -1,0 +1,86 @@
+---
+title: "Changelog"
+description: "What's new in Brain API — release notes and feature updates."
+---
+
+## February 2026
+
+### v0.9.0 — A2A Protocol (2026-02-27)
+
+**Brain API is now an A2A-native platform.**
+
+- `/.well-known/agent.json` — Brain API's Agent Card is publicly discoverable
+- `/api/a2a/tasks` — Accept tasks from any A2A-compatible external agent
+- `/api/a2a/agents/discover` — Discover and connect external A2A agents
+- `/api/a2a/agents/[id]/delegate` — Delegate tasks to external agents
+- **Dashboard → A2A Protocol** — 3-tab UI: Agent Card, Connected Agents, Task History
+- Full A2A type system (`src/types/a2a.ts`)
+
+---
+
+### v0.8.0 — Notifications, API Keys, Dashboard (2026-02-27)
+
+- **In-App Notification Center** — Bell icon in Navbar, unread badge, mark read, 30s polling
+- **API Keys Management** — `/dashboard/api-keys` — generate, view, regenerate with confirmation
+- **Dashboard Overview** — Quick Access grid (8 tiles), tier badge, personalized greeting
+- **Marketplace Submit UI** — "Submit Integration" modal with form validation
+
+---
+
+### v0.7.0 — Prompt Analytics & White-Label (2026-02-26)
+
+- **Prompt Analytics** — LLM-as-judge scoring (1-10), user feedback (👍/👎), semantic drift detection
+- **White-Label Branding** — Custom logo, colors, favicon per organization (`org_branding` table)
+- **Cost Analytics Dashboard** — Daily trend charts, server breakdown, budget alerts
+- **Data Residency UI** — Region selection in Organization settings
+
+---
+
+### v0.6.0 — Workflows, Knowledge Base, AI Gateway (2026-02-25 — 2026-02-26)
+
+- **Visual Workflow Builder** — 7 node types, drag-and-drop canvas (React Flow), MiniMap
+- **Workflow Execution Engine** — Step-by-step runner, condition branching, loop support
+- **Knowledge Base + RAG** — Upload documents, pgvector embeddings, semantic search, auto-inject context
+- **AI Gateway** — Model fallback chains, semantic caching (LRU, 5min TTL), rate limiting
+- **MCP Marketplace** — Browse, install, and publish MCP servers
+- **Computer Use MCP** — Playwright-based browser automation (6 tools)
+
+---
+
+### v0.5.0 — Enterprise Features (2026-02-25)
+
+- **SSO + SCIM v2** — Microsoft Entra ID, Okta, SCIM provisioning/deprovisioning
+- **RBAC** — Organization roles: admin, editor, viewer
+- **12 New MCP Integrations** — Slack, Google Workspace, Notion, HubSpot, Salesforce, Zendesk, Airtable, Confluence, Asana, Trello, Discord, Stripe
+- **DLP Engine** — Zero-trust bidirectional PII masking, custom regex rules
+- **Workspace Switcher** — Multi-workspace support in Navbar
+
+---
+
+### v0.4.0 — Human Approvals & Guardrails (2026-02-25)
+
+- **Human-in-the-Loop** — Approval requests for sensitive tool calls, timeout/escalation rules
+- **Advanced Guardrails** — Jailbreak detection, content filtering, JSON schema output validation
+- **Prompt Management** — CRUD with versioning, A/B testing, environment management (dev/staging/prod)
+- **GitHub Event Triggers** — HMAC SHA-256 verified webhook triggers on push, PR, and issues
+
+---
+
+### v0.3.0 — Recipes & Agent Watcher (2026-02-24)
+
+- **Recipes System** — 4 pre-built templates, webhook + cron triggers
+- **SSE Cloud MCP** — Host MCP servers on Brain API
+- **Multi-Agent Watcher** — Background task processor via `.agents/state.json`
+- **Token UX** — Exhausted balance banner with upgrade actions
+
+---
+
+### v0.1.0 — Initial Release (2026-02-22)
+
+- AI agent chat with Vercel AI SDK streaming
+- NextAuth authentication (Google, GitHub)
+- Supabase integration with RLS
+- SAP S/4HANA MCP server
+- Local LLM support (LM Studio)
+- Token-based billing (Free/Pro/Enterprise)
+- AES-256-GCM credential vault

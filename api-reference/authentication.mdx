@@ -1,0 +1,111 @@
+---
+title: "Authentication"
+description: "How to authenticate with the Brain API REST API."
+---
+
+## Overview
+
+Brain API has two authentication methods depending on how you're accessing it:
+
+| Method | Use case |
+|--------|----------|
+| **Session (NextAuth)** | Dashboard UI, browser-based access |
+| **Bearer Token (API Key)** | Programmatic access, webhooks, A2A agents |
+
+---
+
+## API Keys
+
+Generate an API key in **Dashboard → API Keys**.
+
+```bash
+# Include in every API request
+Authorization: Bearer brain_sk_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+```
+
+<Warning>
+  API keys are shown **only once** at creation. Store them immediately in a secrets manager. If you lose a key, regenerate it — old keys are immediately invalidated.
+</Warning>
+
+### Key Format
+
+```
+brain_sk_[32-character-hex]
+```
+
+Keys are stored as SHA-256 hashes in the database. Brain API cannot recover a lost key.
+
+---
+
+## Making Authenticated Requests
+
+### Trigger a Recipe (Webhook)
+
+```bash
+curl -X POST https://brainapi.dev/api/automations/trigger \
+  -H "Authorization: Bearer brain_sk_YOUR_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "input": "Generate a weekly sales report",
+    "recipeId": "optional-recipe-id"
+  }'
+```
+
+### Send an A2A Task
+
+```bash
+curl -X POST https://brainapi.dev/api/a2a/tasks \
+  -H "Authorization: Bearer brain_sk_YOUR_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "message": {
+      "role": "user",
+      "parts": [{ "type": "text", "text": "Analyze our SAP inventory levels" }]
+    }
+  }'
+```
+
+---
+
+## Rate Limits
+
+| Tier | Requests/minute | Requests/day |
+|------|----------------|--------------|
+| Free | 10 | 100 |
+| Pro | 60 | 10,000 |
+| Enterprise | Custom | Unlimited |
+
+Rate limit headers are included in every response:
+
+```
+X-RateLimit-Limit: 60
+X-RateLimit-Remaining: 58
+X-RateLimit-Reset: 1706745600
+```
+
+---
+
+## Error Responses
+
+All API errors follow this structure:
+
+```json
+{
+  "error": "Unauthorized",
+  "message": "Invalid or expired API key",
+  "details": "Key not found in user_api_keys table",
+  "actions": [
+    {
+      "label": "Generate a new API key",
+      "url": "https://brainapi.dev/dashboard/api-keys"
+    }
+  ]
+}
+```
+
+| Status Code | Meaning |
+|-------------|---------|
+| `401` | Missing or invalid authentication |
+| `402` | Insufficient token balance — upgrade or add tokens |
+| `403` | Valid auth but insufficient permissions (role check failed) |
+| `429` | Rate limit exceeded |
